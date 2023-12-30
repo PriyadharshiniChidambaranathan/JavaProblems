@@ -1,40 +1,53 @@
 import java.io.*;
+import java.util.Arrays;
 
 public class first_app {
     public static void main(String[] args) {
+
+        int[] original_values={1, 2, 3 , 4, 2};
+        
        
         Filedata fd=new Filedata();
         FileList fl = new FileList();
         fd.createFile();   
 
-        int[] append_data=fl.append(5);
+        fd.writeFileArray(original_values, "Original Array: ");
+
+        int[] append_data=fl.append(5,original_values);
         fd.writeFileArray(append_data,"1) Result append():");
 
         String isPresent=fl.hasValue(3);
         fd.writeFileData(isPresent,"2) Result hasValue(): ");
 
-        String Index_value=fl.findIndices(2);
+        String Index_value=fl.findIndices(3);
         fd.writeFileData(Index_value,"3) Result findIndices(): ");
 
         String Index1_value=fl.findFirstIndex(2);
         fd.writeFileData(Index1_value,"4) Result findFirstIndex(): ");
 
-        int[] deleteFirst_data=fl.deleteFirst(2);
-        fd.writeFileArray(deleteFirst_data,"5) Result deleteFirst():");
+        String last_index=fl.findLastIndex(2);
+        fd.writeFileData(last_index, "5) Find Last Index : ");
 
-        fl.findLastIndex(2);
-        fl.deleteAll(2);      
+        int[] deleteFirst_data=fl.deleteFirst(2,original_values);
+        fd.writeFileArray(deleteFirst_data,"5) Result deleteFirst():");
+        
+        int[] del_all_data=fl.deleteAll(2); 
+        fd.writeFileArray(del_all_data, "7) Result deleteAll() : ");
+        
+
+        int[]  insert_data=fl.insert(8, 2);
+        fd.writeFileArray(insert_data, "8) Result insert(): ");
+        
 }
 }
 
 class FileList{
     
-    int[] original_values={1, 2, 3 , 4, 2};
     int[] modified_values= new int[9];
     
 //Add an element to array:-------------
    
-    int[] append(int value){
+    int[] append(int value,int[] original_values){
         for (int i=0 ; i<modified_values.length ; i++)
         {   
             if(i < original_values.length){
@@ -46,7 +59,7 @@ class FileList{
         return modified_values;
     }
     
-//To check the presence of value
+//To check the presence of value:----------
 
     String hasValue(int value){
         boolean contains=false;
@@ -60,7 +73,7 @@ class FileList{
     }
 
 
-//To find the position of value
+//To find the position of value:-----------
     
     String findIndices(int value){
         int position=0;
@@ -75,7 +88,7 @@ class FileList{
    }
 
 
-//To find the first index of value:
+//To find the first index of value:---------------
     
     String findFirstIndex(int value){ 
         int position=0;
@@ -85,20 +98,39 @@ class FileList{
 		break;
             }
         }
+        
         String result= "First Index of value " + value + " is: " +position;
         return result;
         
     }
     
+// To find the last Index of Value:-------------
 
-//To delete 1st value
+    String findLastIndex(int value){
+        int position=0;
+        int len=modified_values.length;
+        for(int i=len; i>0 ; i--){
+            if(modified_values[i-1]==value){
+                position=i-1;
+                break;
+            }
+        }
+        String ans= "Last Index of value " + value + " is : " +position;
+        return ans;
+    }
 
-    int[] deleteFirst(int value){
+//To delete 1st value:--------------
+
+    int[] deleteFirst(int value,int[] arr){
+
         int position=0;
         int[] del_modified_values=new int[modified_values.length];
-        for(int i=0;i<del_modified_values.length;i++){
-            del_modified_values[i]=modified_values[i];
-        }
+       
+        for(int i=0;i<del_modified_values.length-1;i++){
+            if(i < arr.length){
+            del_modified_values[i]=arr[i];
+            }
+        }        
 
         for(int i=0; i<del_modified_values.length ; i++){
             if(del_modified_values[i]==value){
@@ -106,54 +138,46 @@ class FileList{
 		break;
             }
         }
+        
         for (int in=position;in<del_modified_values.length-1;in++){
             del_modified_values[in]=del_modified_values[in+1];
         }        
         return del_modified_values;
     }
 
-    //Needs work------------------------------------------
-//To delete All value:
+//To delete All value:---------------
 
-    void deleteAll(int value){
-
-        int[] position=new int[modified_values.length];
-        int num=0;
-        for(int i=0;i<modified_values.length;i++){
-            if(modified_values[i]==value){
-                position[num]=i;
-                num++;
-            }}
-        for(int i=0;i<position.length;i++){
-                System.out.println(position[i]);
+    int[] deleteAll(int value){
+        int[] ans=new int[modified_values.length];
+        for(int i=0;i<ans.length;i++){
+            ans[i]=modified_values[i];
         }
-            
-        }
-        
-  // To find the last Index of Value:
 
-    void findLastIndex(int value){
-        int[] modifiedd_values = {1,2,3,4,5,2};
-        int position=0;
-        int len=modifiedd_values.length;
-        for(int i=len; i>0 ; i--){
-            if(modifiedd_values[i-1]==value){
-                position=i;
-                break;
+        for(int i=0;i<ans.length-1;i++){        
+            if(ans[i] ==value){
+                ans=deleteFirst(ans[i],ans);
             }
         }
-       System.out.println("Last Index of value " + value + " is: " +position);
-        
-    }
-  
+        return ans;
+        }
 
 //To insert value in specific position:
 
-    void insert(int value, int index){
-        
-    }
-      
-
+    int[] insert(int value, int index){
+        int temp=0;
+        System.out.println("Array: "+Arrays.toString(modified_values) );
+        for(int i=0;i<modified_values.length;i++){
+            if(i==index){
+                for(int j=i;j<modified_values.length;j++){
+                    temp=modified_values[j];
+                    modified_values[j]=value;
+                    value=temp;
+                }            
+            }                
+        }        
+        System.out.println("Array out: "+Arrays.toString(modified_values) );
+        return modified_values;        
+    }     
 }
 
 class Filedata{
@@ -182,11 +206,11 @@ class Filedata{
       BufferedWriter myWriter = new BufferedWriter(new FileWriter("C:\\Users\\dhars\\Desktop\\text_file_java\\data.txt",true));
       myWriter.write(statement);
       myWriter.newLine();
-      myWriter.write("[");
-      for (int i=0;i<x.length;i++){
-      myWriter.write(x[i]+",");
-    }
-      myWriter.write("]");
+      //myWriter.write("[");
+      myWriter.write(Arrays.toString(x));
+      //for (int i=0;i<x.length;i++){
+      //myWriter.write(x[i]+" ");}
+      //myWriter.write("]");
       myWriter.newLine();
       myWriter.close();
       System.out.println("Successfully wrote to the file.");
